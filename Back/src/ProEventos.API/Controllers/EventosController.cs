@@ -3,7 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProEventos.Application.Contratos;
-using ProEventos.Domain;
+using ProEventos.Application.Dtos;
+
 
 
 namespace ProEventos.API.Controllers
@@ -26,7 +27,7 @@ namespace ProEventos.API.Controllers
             try
             {
                 var eventos = await _eventoService.GetAllEventosAsync(true);
-                if (eventos == null) return NotFound("Nenhum evento encontrado.");
+                if (eventos == null) return NoContent();
 
                 return Ok(eventos);
             }
@@ -44,7 +45,7 @@ namespace ProEventos.API.Controllers
             try
             {
                 var evento = await _eventoService.GetEventoByIdAsync(id, true);
-                if (evento == null) return NotFound("Evento por Id não encontrado.");
+                if (evento == null) return NoContent();
 
                 return Ok(evento);
             }
@@ -62,7 +63,7 @@ namespace ProEventos.API.Controllers
             try
             {
                 var eventos = await _eventoService.GetAllEventosByTemaAsync(tema, true);
-                if (eventos == null) return NotFound("Eventos por tema não encontrados.");
+                if (eventos == null) return NoContent();
 
                 return Ok(eventos);
             }
@@ -75,7 +76,7 @@ namespace ProEventos.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(Evento model)
+        public async Task<IActionResult> Post(EventoDto model)
         {
             try
             {
@@ -93,7 +94,7 @@ namespace ProEventos.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, Evento model)
+        public async Task<IActionResult> Put(int id, EventoDto model)
         {
             try
             {
@@ -115,7 +116,10 @@ namespace ProEventos.API.Controllers
         {
             try
             {
-                return await _eventoService.DeleteEvento(id) ? Ok("Deletado") : BadRequest("Evento não deletado");
+                var evento = await _eventoService.GetEventoByIdAsync(id, true);
+                if (evento == null) return NoContent();    
+
+                return await _eventoService.DeleteEvento(id) ? Ok("Deletado") : throw new Exception("Ocorreu um erro não específico ao deletar o Evento.");
 
             }
             catch (Exception ex)
