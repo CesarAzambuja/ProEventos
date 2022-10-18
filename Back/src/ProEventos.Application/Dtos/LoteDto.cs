@@ -28,7 +28,7 @@ namespace ProEventos.Application.Dtos
         public int Quantidade { get; set; }
         public int EventoId { get; set; }
 
-        [Required(ErrorMessage ="O campo {0} é obrigatório.")]
+        
         public EventoDto Evento { get; set; }
     }
     
